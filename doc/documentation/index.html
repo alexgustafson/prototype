@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gulp Markdown Docs</title>
+  <style>/*
+
+Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #002b36;
+  color: #839496;
+  -webkit-text-size-adjust: none;
+}
+
+.hljs-comment,
+.diff .hljs-header,
+.hljs-doctype,
+.hljs-pi,
+.lisp .hljs-string {
+  color: #586e75;
+}
+
+/* Solarized Green */
+.hljs-keyword,
+.hljs-winutils,
+.method,
+.hljs-addition,
+.css .hljs-tag,
+.hljs-request,
+.hljs-status,
+.nginx .hljs-title {
+  color: #859900;
+}
+
+/* Solarized Cyan */
+.hljs-number,
+.hljs-command,
+.hljs-string,
+.hljs-tag .hljs-value,
+.hljs-rule .hljs-value,
+.hljs-doctag,
+.tex .hljs-formula,
+.hljs-regexp,
+.hljs-hexcolor,
+.hljs-link_url {
+  color: #2aa198;
+}
+
+/* Solarized Blue */
+.hljs-title,
+.hljs-localvars,
+.hljs-chunk,
+.hljs-decorator,
+.hljs-built_in,
+.hljs-identifier,
+.vhdl .hljs-literal,
+.hljs-id,
+.css .hljs-function,
+.hljs-name {
+  color: #268bd2;
+}
+
+/* Solarized Yellow */
+.hljs-attribute,
+.hljs-variable,
+.lisp .hljs-body,
+.smalltalk .hljs-number,
+.hljs-constant,
+.hljs-class .hljs-title,
+.hljs-parent,
+.hljs-type,
+.hljs-link_reference {
+  color: #b58900;
+}
+
+/* Solarized Orange */
+.hljs-preprocessor,
+.hljs-preprocessor .hljs-keyword,
+.hljs-pragma,
+.hljs-shebang,
+.hljs-symbol,
+.hljs-symbol .hljs-string,
+.diff .hljs-change,
+.hljs-special,
+.hljs-attr_selector,
+.hljs-subst,
+.hljs-cdata,
+.css .hljs-pseudo,
+.hljs-header {
+  color: #cb4b16;
+}
+
+/* Solarized Red */
+.hljs-deletion,
+.hljs-important {
+  color: #dc322f;
+}
+
+/* Solarized Violet */
+.hljs-link_label {
+  color: #6c71c4;
+}
+
+.tex .hljs-formula {
+  background: #073642;
+}
+</style><style>body {
+  margin-left: 35vw;
+  font-family: sans-serif;
+}
+pre {
+  /* matches solarized_dark */
+  background: #002b36;
+  color: #839496;
+  padding: 1em;
+  margin: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.doc-nav {
+  position: fixed;
+  width: 32vw;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 1em;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+
+}
+.doc-nav a {
+  text-decoration: none;
+}
+.doc-nav a:hover {
+  text-decoration: underline;
+}
+.doc-nav-group {
+  list-style: none;
+  padding: 0;
+}
+.doc-nav-group-header {
+  display: block;
+  padding: 0.5em 0;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.doc-nav-group-header,
+.doc-nav-group-header a:active,
+.doc-nav-group-header a:visited {
+  color: #212121;
+}
+.doc-nav-item {
+  padding: 0.5em 0 0.5em 1.5em;
+}
+.doc-nav-item a:active,
+.doc-nav-item a:visited {
+  color: #454545;
+}
+.doc-section-header {
+  font-size: 1.7em;
+  border-bottom: 1px solid #839496;
+  padding-bottom: 0.5em;
+}
+.doc-article {
+  padding-bottom: 4em;
+  display: block;
+}
+.doc-article h1 {
+  font-size: 1.6em;
+}
+.doc-article + .doc-article {
+  padding-top: 3em;
+  border-top: 1px solid #323232;
+}</style></head>
+  <body>
+    <section class="doc-nav"><ul class="doc-nav-group"><li class="doc-nav-item"><a href="#project_requirements">Requirements</a></li><li class="doc-nav-item"><a href="#setup_prototype">Setup Prototype Project</a></li><li class="doc-nav-item"><a href="#doc_howto">Setup Documentation Project</a></li></ul></section>
+    <section class="doc-content"><section class="doc-section"><article class="doc-article"><a class="doc-nav-anchor" name="project_requirements"></a><h1 id="project-requirements">Project Requirements</h1>
+<p>git, node, npm </p>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="setup_prototype"></a><h1 id="prototype-project-setup">Prototype Project Setup</h1>
+<pre><code><span class="hljs-variable">$ </span>mkdir prototype
+<span class="hljs-variable">$ </span>cd prototype
+<span class="hljs-variable">$ </span>npm init
+</code></pre><p>accept all default</p>
+<h2 id="install-requirements">Install Requirements</h2>
+<pre><code>$ npm install gulp --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+$ npm install gulp-sass --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+$ npm install gulp-jade --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+$ npm install require-dir --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+</code></pre><h2 id="create-source-files">Create Source Files</h2>
+<pre><code><span class="hljs-variable">$ </span>mkdir src
+<span class="hljs-variable">$ </span>mkdir src/scss
+<span class="hljs-variable">$ </span>mkdir src/jade
+<span class="hljs-variable">$ </span>mkdir src/js
+<span class="hljs-variable">$ </span>touch src/scss/main.scss
+<span class="hljs-variable">$ </span>touch src/jade/index.jade
+<span class="hljs-variable">$ </span>touch src/js/main.js
+</code></pre><h2 id="setup-gulp">Setup Gulp</h2>
+<pre><code><span class="hljs-variable">$ </span>mkdir gulp
+<span class="hljs-variable">$ </span>mkdir gulp/tasks
+<span class="hljs-variable">$ </span>touch gulpfile.js
+</code></pre><p>add this code to gulpfile.js:</p>
+<pre><code>// <span class="hljs-keyword">all</span> gulp tasks are located <span class="hljs-keyword">in</span> the ./build/tasks directory
+// gulp <span class="hljs-keyword">configuration</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> files <span class="hljs-keyword">in</span> ./build directory
+require(<span class="hljs-attribute">&apos;require</span>-dir&apos;)(<span class="hljs-attribute">&apos;gulp</span>/tasks&apos;);
+</code></pre><p>create the gulp files</p>
+<pre><code>$ touch gulp/paths<span class="hljs-class">.js</span>
+$ touch gulp/tasks/scss<span class="hljs-class">.js</span>
+$ touch gulp/tasks/jade<span class="hljs-class">.js</span>
+$ touch gulp/tasks/build<span class="hljs-class">.js</span>
+$ touch gulp/tasks/watch.js
+</code></pre><p>add this code to the gulp/paths.js file:</p>
+<pre><code><span class="hljs-keyword">var</span> path = require(<span class="hljs-symbol">&apos;pat</span>h&apos;);
+
+<span class="hljs-keyword">var</span> appRoot = <span class="hljs-symbol">&apos;src</span>/&apos;;
+<span class="hljs-keyword">var</span> outputRoot = <span class="hljs-symbol">&apos;dist</span>/&apos;;
+
+module.exports = {
+
+    scss: appRoot + <span class="hljs-symbol">&apos;scss</span><span class="hljs-comment">/**/</span>*.scss&apos;,
+    jade: appRoot + <span class="hljs-symbol">&apos;jade</span><span class="hljs-comment">/**/</span>*.jade&apos;,
+    jade_exclude: &apos;!&apos; + appRoot + <span class="hljs-symbol">&apos;jade</span><span class="hljs-comment">/**/</span>_*.jade&apos;, <span class="hljs-comment">// dont compile jade files that begin with _</span>
+    js: appRoot + <span class="hljs-symbol">&apos;js</span><span class="hljs-comment">/**/</span>*.js&apos;,
+
+    styleOutput: outputRoot + <span class="hljs-symbol">&apos;style</span><span class="hljs-comment">/*.css&apos;,
+
+    dest: outputRoot
+
+};</span>
+</code></pre><h3 id="setup-gulp-jade-task">Setup Gulp Jade Task</h3>
+<p>add this code to the gulp/tasks/jade.js file:</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>);
+<span class="hljs-keyword">var</span> jade = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;gulp-jade&quot;</span>);
+
+
+gulp.task(<span class="hljs-string">&apos;jade&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    gulp.src([paths.jade, paths.jade_exclude])
+        .pipe(jade({
+            pretty: <span class="hljs-literal">true</span>
+        }))
+        .pipe(gulp.dest(paths.dest))
+});
+</code></pre><p>add some code to the index.jade file:</p>
+<pre><code>doctype html
+html(lang=<span class="hljs-string">&quot;en&quot;</span>)
+  head
+    title= pageTitle
+    <span class="hljs-keyword">script</span>(type=&apos;<span class="hljs-type">text</span>/javascript&apos;).
+      <span class="hljs-keyword">if</span> (foo) {
+        bar(<span class="hljs-number">1</span> + <span class="hljs-number">5</span>)
+      }
+  body
+    h1 Jade - node template engine
+    <span class="hljs-comment">#container.col</span>
+      <span class="hljs-keyword">if</span> youAreUsingJade
+        p You are amazing
+      <span class="hljs-keyword">else</span>
+        p Get <span class="hljs-function_start"><span class="hljs-keyword">on</span></span> <span class="hljs-keyword">it</span>!
+      p.
+        Jade <span class="hljs-keyword">is</span> a terse <span class="hljs-keyword">and</span> simple
+        templating language <span class="hljs-keyword">with</span> a
+        strong focus <span class="hljs-function_start"><span class="hljs-keyword">on</span></span> performance
+        <span class="hljs-keyword">and</span> powerful features.
+</code></pre><p>test the gulp jade command:</p>
+<pre><code><span class="hljs-variable">$ </span>gulp jade
+</code></pre><p>you should now see and index.html file in the dist/ directory</p>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
+<p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
+We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 
+We&apos;ll use gulp-markdown-docs to compile our markdown to html.</p>
+<p>First let&apos;s install the requirements.</p>
+<h2 id="install-requirements">Install Requirements</h2>
+<pre><code>$ mkdir doc
+
+$ cd doc
+
+$ mkdir src
+
+$ mkdir documentation
+
+$ npm init
+
+This utility will walk you through creating a package.json file.
+It only covers the most common items, and tries to guess sensible defaults.
+
+See `npm <span class="hljs-operator"><span class="hljs-keyword">help</span> <span class="hljs-keyword">json</span><span class="hljs-string">` for definitive documentation on these fields
+and exactly what they do.
+
+Use `</span>npm <span class="hljs-keyword">install</span> &lt;pkg&gt; <span class="hljs-comment">--save` afterwards to install a package and</span>
+<span class="hljs-keyword">save</span> it <span class="hljs-keyword">as</span> a dependency <span class="hljs-keyword">in</span> the <span class="hljs-keyword">package</span>.<span class="hljs-keyword">json</span> <span class="hljs-keyword">file</span>.
+
+Press ^<span class="hljs-keyword">C</span> <span class="hljs-keyword">at</span> <span class="hljs-keyword">any</span> <span class="hljs-keyword">time</span> <span class="hljs-keyword">to</span> quit.
+<span class="hljs-keyword">name</span>: (doc) prototype-doc
+<span class="hljs-keyword">version</span>: (<span class="hljs-number">1.0</span><span class="hljs-number">.0</span>)
+description: documentation <span class="hljs-keyword">of</span> prototype tutorial
+entry point: (<span class="hljs-keyword">index</span>.js)
+<span class="hljs-keyword">test</span> command:
+git repository:
+keywords:
+author:
+license: (ISC)
+About <span class="hljs-keyword">to</span> write <span class="hljs-keyword">to</span> <span class="hljs-keyword">path</span>/<span class="hljs-keyword">path</span>/<span class="hljs-keyword">path</span>/doc/<span class="hljs-keyword">package</span>.<span class="hljs-keyword">json</span>:
+
+{
+  <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;prototype-doc&quot;</span>,
+  <span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-string">&quot;1.0.0&quot;</span>,
+  <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;documentation of prototype tutorial&quot;</span>,
+  <span class="hljs-string">&quot;main&quot;</span>: <span class="hljs-string">&quot;index.js&quot;</span>,
+  <span class="hljs-string">&quot;scripts&quot;</span>: {
+    <span class="hljs-string">&quot;test&quot;</span>: <span class="hljs-string">&quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span>
+  },
+  <span class="hljs-string">&quot;author&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-string">&quot;license&quot;</span>: <span class="hljs-string">&quot;ISC&quot;</span>
+}
+
+<span class="hljs-keyword">Is</span> this ok? (yes) yes
+
+$ npm <span class="hljs-keyword">install</span> gulp <span class="hljs-comment">--save-dev</span>
+
+$ npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save-dev gulp-markdown-docs</span>
+
+$ npm <span class="hljs-keyword">install</span> browser-<span class="hljs-keyword">sync</span> gulp <span class="hljs-comment">--save-dev</span></span>
+</code></pre><h2 id="project-structure">Project Structure</h2>
+<p>Some files have been generated automatically already, you need to create the others at this point by hand.
+In the doc folder create the following two files:</p>
+<p>gulpfile.js</p>
+<p>.gitignore</p>
+<p>In the src directory create a file named chapter1.md. </p>
+<p>The doc directory structure should look like the following:</p>
+<pre><code>doc/
+    documentation/
+    node_modules/
+    src/
+        chapter1<span class="hljs-class">.md</span>
+    <span class="hljs-class">.gitignore</span>
+    gulpfile<span class="hljs-class">.js</span>
+    package.json
+</code></pre><h2 id="create-gulpfile-js">Create gulpfile.js</h2>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> markdownDocs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp-markdown-docs&apos;</span>);
+<span class="hljs-keyword">var</span> browserSync = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;browser-sync&apos;</span>).create();
+
+gulp.task(<span class="hljs-string">&apos;md&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> gulp.src(<span class="hljs-string">&apos;src/**/*.md&apos;</span>)
+    .pipe(markdownDocs(<span class="hljs-string">&apos;index.html&apos;</span>, {
+        yamlMeta: <span class="hljs-literal">true</span>,
+        documentSort: <span class="hljs-string">&apos;rank&apos;</span>
+  }))
+    .pipe(gulp.dest(<span class="hljs-string">&apos;./documentation/&apos;</span>));
+});
+
+gulp.task(<span class="hljs-string">&apos;serve&apos;</span>, [<span class="hljs-string">&apos;md&apos;</span>], <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+
+    <span class="hljs-comment">// Serve files from the root of this project</span>
+    browserSync.init({
+        server: {
+            baseDir: <span class="hljs-string">&quot;./documentation/&quot;</span>
+        },
+        injectChanges: <span class="hljs-literal">true</span>
+    });
+
+    gulp.watch(<span class="hljs-string">&quot;src/**/*.md&quot;</span>, [<span class="hljs-string">&apos;md&apos;</span>]).on(<span class="hljs-string">&apos;change&apos;</span>, browserSync.reload);
+});
+</code></pre><h2 id="create-documentation">Create Documentation</h2>
+<p>Gulp Markdown Docs looks for some yaml formated meta information at the top of each page. </p>
+<pre><code><span class="hljs-attribute">label</span>: <span class="hljs-string">[page label here]</span>
+<span class="hljs-attribute">id</span>: <span class="hljs-string">[page_id_for_anchor]</span>
+</code></pre></article></section></section>
+  </body>
+
