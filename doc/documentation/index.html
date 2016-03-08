@@ -184,7 +184,7 @@ pre {
   border-top: 1px solid #323232;
 }</style></head>
   <body>
-    <section class="doc-nav"><ul class="doc-nav-group"><li class="doc-nav-item"><a href="#project_requirements">Requirements</a></li><li class="doc-nav-item"><a href="#setup_prototype">Setup Prototype Project</a></li><li class="doc-nav-item"><a href="#doc_howto">Setup Documentation Project</a></li></ul></section>
+    <section class="doc-nav"><ul class="doc-nav-group"><li class="doc-nav-item"><a href="#project_requirements">Requirements</a></li><li class="doc-nav-item"><a href="#setup_prototype">Setup Prototype Project</a></li><li class="doc-nav-item"><a href="#option_wiredep">Option Wiredep</a></li><li class="doc-nav-item"><a href="#doc_howto">Setup Documentation Project</a></li></ul></section>
     <section class="doc-content"><section class="doc-section"><article class="doc-article"><a class="doc-nav-anchor" name="project_requirements"></a><h1 id="project-requirements">Project Requirements</h1>
 <p>git, node, npm </p>
 </article><article class="doc-article"><a class="doc-nav-anchor" name="setup_prototype"></a><h1 id="prototype-project-setup">Prototype Project Setup</h1>
@@ -193,18 +193,21 @@ pre {
 <span class="hljs-variable">$ </span>npm init
 </code></pre><p>accept all default</p>
 <h2 id="install-requirements">Install Requirements</h2>
-<pre><code>$ npm install gulp --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
-$ npm install gulp-sass --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
-$ npm install gulp-jade --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
-$ npm install require-dir --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+<pre><code>$ npm <span class="hljs-operator"><span class="hljs-keyword">install</span> gulp <span class="hljs-comment">--save-dev</span>
+$ npm <span class="hljs-keyword">install</span> gulp-sass <span class="hljs-comment">--save-dev</span>
+$ npm <span class="hljs-keyword">install</span> gulp-jade <span class="hljs-comment">--save-dev</span>
+$ npm <span class="hljs-keyword">install</span> require-dir <span class="hljs-comment">--save-dev</span>
+$ npm <span class="hljs-keyword">install</span> gulp-copy <span class="hljs-comment">--save-dev</span>
+$ npm <span class="hljs-keyword">install</span> run-<span class="hljs-keyword">sequence</span> <span class="hljs-comment">--save-dev</span></span>
 </code></pre><h2 id="create-source-files">Create Source Files</h2>
 <pre><code><span class="hljs-variable">$ </span>mkdir src
 <span class="hljs-variable">$ </span>mkdir src/scss
 <span class="hljs-variable">$ </span>mkdir src/jade
-<span class="hljs-variable">$ </span>mkdir src/js
+<span class="hljs-variable">$ </span>mkdir src/scripts
+<span class="hljs-variable">$ </span>mkdir src/assets
 <span class="hljs-variable">$ </span>touch src/scss/main.scss
 <span class="hljs-variable">$ </span>touch src/jade/index.jade
-<span class="hljs-variable">$ </span>touch src/js/main.js
+<span class="hljs-variable">$ </span>touch src/scripts/main.js
 </code></pre><h2 id="initial-gulp-setup">Initial Gulp Setup</h2>
 <pre><code><span class="hljs-variable">$ </span>mkdir gulp
 <span class="hljs-variable">$ </span>mkdir gulp/tasks
@@ -216,6 +219,8 @@ require(<span class="hljs-attribute">&apos;require</span>-dir&apos;)(<span class
 </code></pre><p>create the gulp files</p>
 <pre><code>$ touch gulp/paths<span class="hljs-class">.js</span>
 $ touch gulp/tasks/scss<span class="hljs-class">.js</span>
+$ touch gulp/tasks/assets<span class="hljs-class">.js</span>
+$ touch gulp/tasks/scripts<span class="hljs-class">.js</span>
 $ touch gulp/tasks/jade<span class="hljs-class">.js</span>
 $ touch gulp/tasks/build<span class="hljs-class">.js</span>
 $ touch gulp/tasks/watch.js
@@ -230,25 +235,63 @@ module.exports = {
     scss: appRoot + <span class="hljs-symbol">&apos;scss</span><span class="hljs-comment">/**/</span>*.scss&apos;,
     jade: appRoot + <span class="hljs-symbol">&apos;jade</span><span class="hljs-comment">/**/</span>*.jade&apos;,
     jade_exclude: &apos;!&apos; + appRoot + <span class="hljs-symbol">&apos;jade</span><span class="hljs-comment">/**/</span>_*.jade&apos;, <span class="hljs-comment">// dont compile jade files that begin with _</span>
-    js: appRoot + <span class="hljs-symbol">&apos;js</span><span class="hljs-comment">/**/</span>*.js&apos;,
+
+    assets: appRoot + <span class="hljs-symbol">&apos;assets</span><span class="hljs-comment">/**/</span>*&apos;,
+    assets_dest: outputRoot + <span class="hljs-symbol">&apos;assets</span>/&apos;,
+
+    scripts: appRoot + <span class="hljs-symbol">&apos;scripts</span><span class="hljs-comment">/**/</span>*.js&apos;,
+    scripts_output: outputRoot + <span class="hljs-symbol">&apos;scripts</span>/&apos;,
 
     styleOutput: outputRoot + <span class="hljs-symbol">&apos;style</span><span class="hljs-comment">/*.css&apos;,
 
     dest: outputRoot
 
 };</span>
+</code></pre><h3 id="setup-gulp-assets-task">Setup Gulp Assets Task</h3>
+<p>This task is responsible for moving and processing all binary assets 
+( jpegs, pngs, svgs, etc ) into the corresponding dist folders.</p>
+<p>In the gulp/tasks/assets.js file add the following code:</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>);
+<span class="hljs-keyword">var</span> copy = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp-copy&apos;</span>);
+
+gulp.task(<span class="hljs-string">&apos;assets&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> gulp.src(paths.assets)
+        .pipe(copy(paths.assets_dest, {
+            prefix: <span class="hljs-number">2</span>
+        }));
+});
+</code></pre><h3 id="setup-gulp-scripts-task">Setup Gulp Scripts Task</h3>
+<p>This task is responsible for moving and processing all javascript files
+into the corresponding dist folders.</p>
+<p>In the gulp/tasks/scripts.js file add the following code:</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>);
+<span class="hljs-keyword">var</span> copy = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp-copy&apos;</span>);
+
+gulp.task(<span class="hljs-string">&apos;scripts&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> gulp.src(paths.scripts)
+        .pipe(copy(paths.scripts_output, {
+            prefix: <span class="hljs-number">2</span>
+        }));
+});
 </code></pre><h3 id="setup-gulp-jade-task">Setup Gulp Jade Task</h3>
 <p>add this code to the gulp/tasks/jade.js file:</p>
 <pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
 <span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>);
 <span class="hljs-keyword">var</span> jade = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;gulp-jade&quot;</span>);
 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handleError</span>(<span class="hljs-params">err</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(err.toString());
+    <span class="hljs-keyword">this</span>.emit(<span class="hljs-string">&apos;end&apos;</span>);
+}
 
 gulp.task(<span class="hljs-string">&apos;jade&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">return</span> gulp.src([paths.jade, paths.jade_exclude])
         .pipe(jade({
             pretty: <span class="hljs-literal">true</span>
         }))
+        .on(<span class="hljs-string">&apos;error&apos;</span>, handleError)
         .pipe(gulp.dest(paths.dest))
 });
 </code></pre><p>add some code to the index.jade file:</p>
@@ -278,9 +321,15 @@ html(lang=<span class="hljs-string">&quot;en&quot;</span>)
 <span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>);
 <span class="hljs-keyword">var</span> scss = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp-sass&apos;</span>);
 
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handleError</span>(<span class="hljs-params">err</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(err.toString());
+    <span class="hljs-keyword">this</span>.emit(<span class="hljs-string">&apos;end&apos;</span>);
+}
+
 gulp.task(<span class="hljs-string">&apos;scss&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">return</span> gulp.src([paths.scss])
         .pipe(scss({}))
+        .on(<span class="hljs-string">&apos;error&apos;</span>, handleError)
         .pipe(gulp.dest(paths.styleOutput))
 });
 </code></pre><p>add some styles to the main.scss file in the src/scss directory</p>
@@ -294,6 +343,84 @@ gulp.task(<span class="hljs-string">&apos;scss&apos;</span>, <span class="hljs-f
 }
 </code></pre><p>test the gulp scss command:</p>
 <pre><code><span class="hljs-variable">$ </span>gulp scss
+</code></pre><h3 id="setup-gulp-build-and-watch-tasks">Setup Gulp Build and Watch Tasks</h3>
+<p>Add the &apos;jade&apos; and &apos;scss&apos; tasks to the build task in gulp/tasks/build.js</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> runSequence = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;run-sequence&apos;</span>);
+
+gulp.task(<span class="hljs-string">&apos;build&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    runSequence(<span class="hljs-string">&apos;jade&apos;</span>, <span class="hljs-string">&apos;scss&apos;</span>, <span class="hljs-string">&apos;assets&apos;</span>, <span class="hljs-string">&apos;scripts&apos;</span>);
+});
+</code></pre><p>The watch function should monitor the src folder for changes and then trigger
+the appropriate task for the changed file.</p>
+<p>When changes happen in the jade directory trigger the &apos;jade&apos; gulp task, when
+changes happen in the scss directory trigger the &apos;scss&apos; gulp task.</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">reportChange</span>(<span class="hljs-params">event</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;File &apos;</span> + event.path + <span class="hljs-string">&apos; was &apos;</span> + event.type + <span class="hljs-string">&apos;, running tasks...&apos;</span>);
+}
+
+gulp.task(<span class="hljs-string">&apos;watch&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        gulp.watch(paths.jade, [<span class="hljs-string">&apos;jade&apos;</span>]);
+        gulp.watch(paths.scss, [<span class="hljs-string">&apos;scss&apos;</span>]);
+        gulp.watch(paths.assets, [<span class="hljs-string">&apos;assets&apos;</span>, ]).on(<span class="hljs-string">&apos;change&apos;</span>, reportChange);
+        gulp.watch(paths.scripts, [<span class="hljs-string">&apos;scripts&apos;</span>, ]).on(<span class="hljs-string">&apos;change&apos;</span>, reportChange);
+    }
+);
+</code></pre><p>Test it out with the watch command:</p>
+<pre><code><span class="hljs-variable">$ </span>gulp watch
+</code></pre><p>Make some changes to the index.jade or main.scss and they should get recompiled
+immediately.</p>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="option_wiredep"></a><h1 id="option-wiredep">Option Wiredep</h1>
+<p>Wiredep is a node module that will automatically add references to js, css, 
+sass and less files from packages imported via bower.</p>
+<p>We will add a wiredep watcher that will watch the bower.json file for 
+changes and then add the appropriate links.</p>
+<h2 id="install-dependencies">Install Dependencies</h2>
+<p>From the root directory issue the following commands:</p>
+<pre><code>$ npm install bower --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+$ npm install wiredep --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+</code></pre><h2 id="add-wiredep-placeholders">Add Wiredep Placeholders</h2>
+<p>In the src/jade/index.jade file add the css and js placeholder. Css placeholders
+go in the head, js placeholders at the end of the body.</p>
+<pre><code>doctype html
+html(lang=<span class="hljs-string">&quot;en&quot;</span>)
+  head
+    title= pageTitle
+    script(type=<span class="hljs-string">&apos;text/javascript&apos;</span>).
+      <span class="hljs-keyword">if</span> (foo) {
+        bar(<span class="hljs-number">1</span> + <span class="hljs-number">5</span>)
+      }
+
+   <span class="hljs-comment"> // bower:css</span>
+   <span class="hljs-comment"> // endbower</span>
+
+  body
+    h1 Jade - node template engine
+    <span class="hljs-comment">#container.col</span>
+      p.
+        Jade is <span class="hljs-operator">a</span> terse <span class="hljs-operator">and</span> simple
+        templating language <span class="hljs-operator">with</span> <span class="hljs-operator">a</span>
+        strong focus <span class="hljs-command"><span class="hljs-keyword">on</span> <span class="hljs-title">performance</span></span>
+        <span class="hljs-operator">and</span> powerful features..
+
+   <span class="hljs-comment"> // bower:js</span>
+   <span class="hljs-comment"> // endbower</span>
+</code></pre><p>For bower dependencies that use sass ( susy or foundation for example ) wiredep
+will automatically add those import statements to your sass style as well.
+Just add the sass placeholders in your src/scss/main.scss file.</p>
+<pre><code><span class="hljs-comment">// bower:scss</span>
+<span class="hljs-comment">// endbower</span>
+
+<span class="hljs-tag">body</span> {
+  <span class="hljs-attribute">background-color</span>: dimgrey;
+
+  <span class="hljs-tag">h3</span> {
+    <span class="hljs-attribute">color</span>: white;
+  }
+}
 </code></pre></article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
 <p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
 We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 
