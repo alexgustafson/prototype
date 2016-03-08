@@ -21,5 +21,6 @@ gulp.task('serve', ['md'], function () {
         injectChanges: true
     });
 
-    gulp.watch("src/**/*.md", ['md']).on('change', browserSync.reload);
+    gulp.watch("src/**/*.md", ['md']);
+    gulp.watch("documentation/*.*", []).on('change', browserSync.reload);
 });

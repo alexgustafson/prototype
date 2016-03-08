@@ -33,7 +33,7 @@ accept all default
     $ touch src/jade/index.jade
     $ touch src/js/main.js
 
-## Setup Gulp
+## Initial Gulp Setup
 
     $ mkdir gulp
     $ mkdir gulp/tasks
@@ -81,12 +81,17 @@ add this code to the gulp/tasks/jade.js file:
     var paths = require('../paths');
     var jade = require("gulp-jade");
     
+    function handleError(err) {
+        console.log(err.toString());
+        this.emit('end');
+    }
     
     gulp.task('jade', function () {
-        gulp.src([paths.jade, paths.jade_exclude])
+        return gulp.src([paths.jade, paths.jade_exclude])
             .pipe(jade({
                 pretty: true
             }))
+            .on('error', handleError)
             .pipe(gulp.dest(paths.dest))
     });
     
@@ -103,10 +108,7 @@ add some code to the index.jade file:
       body
         h1 Jade - node template engine
         #container.col
-          if youAreUsingJade
-            p You are amazing
-          else
-            p Get on it!
+
           p.
             Jade is a terse and simple
             templating language with a
@@ -119,4 +121,50 @@ test the gulp jade command:
     
 you should now see and index.html file in the dist/ directory
 
+### Setup Gulp Scss Task  
 
+add this code to the scss.js file:
+    
+    var gulp = require('gulp');
+    var paths = require('../paths');
+    var scss = require('gulp-sass');
+    
+    function handleError(err) {
+        console.log(err.toString());
+        this.emit('end');
+    }
+    
+    gulp.task('scss', function() {
+        return gulp.src([paths.scss])
+            .pipe(scss({}))
+            .on('error', handleError)
+            .pipe(gulp.dest(paths.styleOutput))
+    });
+    
+add some styles to the main.scss file in the src/scss directory
+
+    body {
+      background-color: dimgrey;
+    
+      h3 {
+        color: white;
+      }
+    
+    }
+
+test the gulp scss command:
+
+    $ gulp scss
+    
+### Setup Gulp Build and Watch Tasks  
+
+Add the 'jade' and 'scss' tasks to the build task in gulp/tasks/build.js
+
+    var gulp = require('gulp');
+    
+    
+    gulp.task('build', [
+        'jade',
+        'scss'
+    ] );
+    

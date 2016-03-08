@@ -74,9 +74,9 @@ First let's install the requirements.
 Some files have been generated automatically already, you need to create the others at this point by hand.
 In the doc folder create the following two files:
 
-gulpfile.js
+    $ touch gulpfile.js
 
-.gitignore
+    $ touch .gitignore
 
 In the src directory create a file named chapter1.md. 
 
@@ -117,7 +117,8 @@ The doc directory structure should look like the following:
             injectChanges: true
         });
 
-        gulp.watch("src/**/*.md", ['md']).on('change', browserSync.reload);
+        gulp.watch("src/**/*.md", ['md']);
+        gulp.watch("documentation/*.*", []).on('change', browserSync.reload);
     });
 
 ## Create Documentation
