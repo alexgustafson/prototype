@@ -167,3 +167,25 @@ Add the 'jade' and 'scss' tasks to the build task in gulp/tasks/build.js
         runSequence('jade','scss');
     });
     
+The watch function should monitor the src folder for changes and then trigger
+the appropriate task for the changed file.
+
+When changes happen in the jade directory trigger the 'jade' gulp task, when
+changes happen in the scss directory trigger the 'scss' gulp task.
+
+
+    var gulp = require('gulp');
+    var paths = require('../paths')
+    
+    gulp.task('watch', function () {
+            gulp.watch(paths.jade, ['jade']);
+            gulp.watch(paths.scss, ['scss']);
+        }
+    );
+    
+Test it out with the watch command:
+
+    $ gulp watch
+    
+Make some changes to the index.jade or main.scss and they should get recompiled
+immediately.
