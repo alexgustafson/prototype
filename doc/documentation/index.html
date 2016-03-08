@@ -382,6 +382,8 @@ changes and then add the appropriate links.</p>
 <p>From the root directory issue the following commands:</p>
 <pre><code>$ npm install bower --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
 $ npm install wiredep --<span class="hljs-built_in">save</span>-<span class="hljs-built_in">dev</span>
+
+$ bower init
 </code></pre><h2 id="add-wiredep-placeholders">Add Wiredep Placeholders</h2>
 <p>In the src/jade/index.jade file add the css and js placeholder. Css placeholders
 go in the head, js placeholders at the end of the body.</p>
@@ -421,6 +423,71 @@ Just add the sass placeholders in your src/scss/main.scss file.</p>
     <span class="hljs-attribute">color</span>: white;
   }
 }
+</code></pre><p>add the wiredep paths to the gulp/paths.js file:</p>
+<pre><code><span class="hljs-comment">//wiredep stuff</span>
+<span class="hljs-string">bowerDirectory:</span> <span class="hljs-string">&quot;bower_components&quot;</span>,
+<span class="hljs-string">bowerJson:</span> <span class="hljs-string">&apos;bower.json&apos;</span>,
+<span class="hljs-string">wiredep_jade_output:</span> appRoot + <span class="hljs-string">&apos;jade/&apos;</span>,
+<span class="hljs-string">wiredep_scss_output:</span> appRoot + <span class="hljs-string">&apos;scss/&apos;</span>,
+<span class="hljs-string">wiredep_sass_output:</span> appRoot + <span class="hljs-string">&apos;sass/&apos;</span>,
+</code></pre><p>create a file for your wiredep task definitions at gulp/tasks/wiredep.js:</p>
+<pre><code><span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>);
+<span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> wiredep = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;wiredep&apos;</span>).stream;
+
+<span class="hljs-keyword">var</span> overrides = {
+    <span class="hljs-comment">// non standard package paths can be fixed here</span>
+}
+
+
+gulp.task(<span class="hljs-string">&apos;wiredep-jade&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> gulp.src(paths.jade)
+        .pipe(wiredep({
+            directory: paths.bowerDirectory,
+            ignorePath: <span class="hljs-regexp">/^(\.\.\/)*\.\./</span>,
+            overrides: overrides
+        })).pipe(gulp.dest(paths.wiredep_jade_output));
+
+});
+
+
+gulp.task(<span class="hljs-string">&apos;wiredep-scss&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> gulp.src(paths.scss)
+        .pipe(wiredep({
+            directory: paths.bowerDirectory,
+            overrides: overrides
+        })).pipe(gulp.dest(paths.wiredep_scss_output));
+
+});
+
+gulp.task(<span class="hljs-string">&apos;wiredep&apos;</span>, [<span class="hljs-string">&apos;wiredep-jade&apos;</span>,<span class="hljs-string">&apos;wiredep-scss&apos;</span>]);
+</code></pre><p>Add wiredep tasks to the build and watch tasks.</p>
+<p>gulp/tasks/build.js:</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> runSequence = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;run-sequence&apos;</span>);
+
+gulp.task(<span class="hljs-string">&apos;build&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    runSequence(<span class="hljs-string">&apos;wiredep&apos;</span>, [<span class="hljs-string">&apos;jade&apos;</span>, <span class="hljs-string">&apos;scss&apos;</span>, <span class="hljs-string">&apos;assets&apos;</span>, <span class="hljs-string">&apos;scripts&apos;</span>]);
+});
+</code></pre><p>gulp/tasks/watch.js:</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">reportChange</span>(<span class="hljs-params">event</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;File &apos;</span> + event.path + <span class="hljs-string">&apos; was &apos;</span> + event.type + <span class="hljs-string">&apos;, running tasks...&apos;</span>);
+}
+
+gulp.task(<span class="hljs-string">&apos;watch&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        gulp.watch(paths.jade, [<span class="hljs-string">&apos;jade&apos;</span>]);
+        gulp.watch(paths.scss, [<span class="hljs-string">&apos;scss&apos;</span>]);
+        gulp.watch(paths.assets, [<span class="hljs-string">&apos;assets&apos;</span>, ]).on(<span class="hljs-string">&apos;change&apos;</span>, reportChange);
+        gulp.watch(paths.scripts, [<span class="hljs-string">&apos;scripts&apos;</span>, ]).on(<span class="hljs-string">&apos;change&apos;</span>, reportChange);
+        gulp.watch(paths.bowerJson, [<span class="hljs-string">&apos;wiredep&apos;</span>]).on(<span class="hljs-string">&apos;change&apos;</span>, reportChange);
+    }
+);
+</code></pre><p>test it out by adding a bower package and running the gulp build command:</p>
+<pre><code><span class="hljs-variable">$ </span>bower install foundation
+<span class="hljs-variable">$ </span>gulp build
 </code></pre></article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
 <p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
 We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 

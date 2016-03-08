@@ -10,5 +10,6 @@ gulp.task('watch', function () {
         gulp.watch(paths.scss, ['scss']);
         gulp.watch(paths.assets, ['assets', ]).on('change', reportChange);
         gulp.watch(paths.scripts, ['scripts', ]).on('change', reportChange);
+        gulp.watch(paths.bowerJson, ['wiredep']).on('change', reportChange);
     }
 );

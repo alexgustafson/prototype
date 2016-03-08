@@ -17,6 +17,13 @@ module.exports = {
     scripts: appRoot + 'scripts/**/*.js',
     scripts_output: outputRoot + 'scripts/',
 
+    //wiredep stuff
+    bowerDirectory: "bower_components",
+    bowerJson: 'bower.json',
+    wiredep_jade_output: appRoot + 'jade/',
+    wiredep_scss_output: appRoot + 'scss/',
+    wiredep_sass_output: appRoot + 'sass/',
+
     dest: outputRoot,
     styleOutput: outputRoot + 'style/'
 

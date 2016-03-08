@@ -24,6 +24,8 @@ From the root directory issue the following commands:
     $ npm install bower --save-dev
     $ npm install wiredep --save-dev
     
+    $ bower init
+    
 ## Add Wiredep Placeholders
   
 In the src/jade/index.jade file add the css and js placeholder. Css placeholders
@@ -68,3 +70,80 @@ Just add the sass placeholders in your src/scss/main.scss file.
         color: white;
       }
     }
+    
+add the wiredep paths to the gulp/paths.js file:
+
+    //wiredep stuff
+    bowerDirectory: "bower_components",
+    bowerJson: 'bower.json',
+    wiredep_jade_output: appRoot + 'jade/',
+    wiredep_scss_output: appRoot + 'scss/',
+    wiredep_sass_output: appRoot + 'sass/',
+    
+create a file for your wiredep task definitions at gulp/tasks/wiredep.js:
+
+    var paths = require('../paths');
+    var gulp = require('gulp');
+    var wiredep = require('wiredep').stream;
+    
+    var overrides = {
+        // non standard package paths can be fixed here
+    }
+    
+    
+    gulp.task('wiredep-jade', function () {
+        return gulp.src(paths.jade)
+            .pipe(wiredep({
+                directory: paths.bowerDirectory,
+                ignorePath: /^(\.\.\/)*\.\./,
+                overrides: overrides
+            })).pipe(gulp.dest(paths.wiredep_jade_output));
+    
+    });
+    
+    
+    gulp.task('wiredep-scss', function () {
+        return gulp.src(paths.scss)
+            .pipe(wiredep({
+                directory: paths.bowerDirectory,
+                overrides: overrides
+            })).pipe(gulp.dest(paths.wiredep_scss_output));
+    
+    });
+    
+    gulp.task('wiredep', ['wiredep-jade','wiredep-scss']);
+    
+Add wiredep tasks to the build and watch tasks.
+
+gulp/tasks/build.js:
+
+    var gulp = require('gulp');
+    var runSequence = require('run-sequence');
+    
+    gulp.task('build', function() {
+        runSequence('wiredep', ['jade', 'scss', 'assets', 'scripts']);
+    });
+
+gulp/tasks/watch.js:
+
+    var gulp = require('gulp');
+    var paths = require('../paths')
+    
+    function reportChange(event) {
+        console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+    }
+    
+    gulp.task('watch', function () {
+            gulp.watch(paths.jade, ['jade']);
+            gulp.watch(paths.scss, ['scss']);
+            gulp.watch(paths.assets, ['assets', ]).on('change', reportChange);
+            gulp.watch(paths.scripts, ['scripts', ]).on('change', reportChange);
+            gulp.watch(paths.bowerJson, ['wiredep']).on('change', reportChange);
+        }
+    );
+
+test it out by adding a bower package and running the gulp build command:
+
+    $ bower install foundation
+    $ gulp build
+    
