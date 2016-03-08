@@ -2,6 +2,6 @@ var gulp = require('gulp');
 var runSequence = require('run-sequence');
 
 gulp.task('build', function() {
-    runSequence('jade','scss');
+    runSequence('jade', 'scss', 'assets', 'scripts');
 });
 

@@ -10,8 +10,12 @@ module.exports = {
     scss: appRoot + 'scss/**/*.scss',
     jade: appRoot + 'jade/**/*.jade',
     jade_exclude: '!' + appRoot + 'jade/**/_*.jade', // dont compile jade files that begin with _
-    js: appRoot + 'js/**/*.js',
 
+    assets: appRoot + 'assets/**/*',
+    assets_dest: outputRoot + 'assets/',
+
+    scripts: appRoot + 'scripts/**/*.js',
+    scripts_output: outputRoot + 'scripts/',
 
     dest: outputRoot,
     styleOutput: outputRoot + 'style/'

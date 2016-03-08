@@ -22,16 +22,19 @@ accept all default
     $ npm install gulp-sass --save-dev
     $ npm install gulp-jade --save-dev
     $ npm install require-dir --save-dev
+    $ npm install gulp-copy --save-dev
+    $ npm install run-sequence --save-dev
 
 ## Create Source Files
 
     $ mkdir src
     $ mkdir src/scss
     $ mkdir src/jade
-    $ mkdir src/js
+    $ mkdir src/scripts
+    $ mkdir src/assets
     $ touch src/scss/main.scss
     $ touch src/jade/index.jade
-    $ touch src/js/main.js
+    $ touch src/scripts/main.js
 
 ## Initial Gulp Setup
 
@@ -49,6 +52,8 @@ create the gulp files
 
     $ touch gulp/paths.js
     $ touch gulp/tasks/scss.js
+    $ touch gulp/tasks/assets.js
+    $ touch gulp/tasks/scripts.js
     $ touch gulp/tasks/jade.js
     $ touch gulp/tasks/build.js
     $ touch gulp/tasks/watch.js
@@ -65,14 +70,54 @@ add this code to the gulp/paths.js file:
         scss: appRoot + 'scss/**/*.scss',
         jade: appRoot + 'jade/**/*.jade',
         jade_exclude: '!' + appRoot + 'jade/**/_*.jade', // dont compile jade files that begin with _
-        js: appRoot + 'js/**/*.js',
+        
+        assets: appRoot + 'assets/**/*',
+        assets_dest: outputRoot + 'assets/',
+    
+        scripts: appRoot + 'scripts/**/*.js',
+        scripts_output: outputRoot + 'scripts/',
     
         styleOutput: outputRoot + 'style/*.css',
     
         dest: outputRoot
     
     };
+### Setup Gulp Assets Task 
+   
+This task is responsible for moving and processing all binary assets 
+( jpegs, pngs, svgs, etc ) into the corresponding dist folders.
+
+In the gulp/tasks/assets.js file add the following code:
+
+    var gulp = require('gulp');
+    var paths = require('../paths');
+    var copy = require('gulp-copy');
     
+    gulp.task('assets', function () {
+        return gulp.src(paths.assets)
+            .pipe(copy(paths.assets_dest, {
+                prefix: 2
+            }));
+    });
+   
+### Setup Gulp Scripts Task   
+ 
+This task is responsible for moving and processing all javascript files
+into the corresponding dist folders.
+
+In the gulp/tasks/scripts.js file add the following code:
+
+    var gulp = require('gulp');
+    var paths = require('../paths');
+    var copy = require('gulp-copy');
+    
+    gulp.task('scripts', function () {
+        return gulp.src(paths.scripts)
+            .pipe(copy(paths.scripts_output, {
+                prefix: 2
+            }));
+    });
+ 
 ### Setup Gulp Jade Task    
     
 add this code to the gulp/tasks/jade.js file:
@@ -164,7 +209,7 @@ Add the 'jade' and 'scss' tasks to the build task in gulp/tasks/build.js
     var runSequence = require('run-sequence');
     
     gulp.task('build', function() {
-        runSequence('jade','scss');
+        runSequence('jade', 'scss', 'assets', 'scripts');
     });
     
 The watch function should monitor the src folder for changes and then trigger
@@ -177,9 +222,15 @@ changes happen in the scss directory trigger the 'scss' gulp task.
     var gulp = require('gulp');
     var paths = require('../paths')
     
+    function reportChange(event) {
+        console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+    }
+    
     gulp.task('watch', function () {
             gulp.watch(paths.jade, ['jade']);
             gulp.watch(paths.scss, ['scss']);
+            gulp.watch(paths.assets, ['assets', ]).on('change', reportChange);
+            gulp.watch(paths.scripts, ['scripts', ]).on('change', reportChange);
         }
     );
     
@@ -189,3 +240,4 @@ Test it out with the watch command:
     
 Make some changes to the index.jade or main.scss and they should get recompiled
 immediately.
+
