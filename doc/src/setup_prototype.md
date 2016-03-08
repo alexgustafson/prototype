@@ -161,10 +161,9 @@ test the gulp scss command:
 Add the 'jade' and 'scss' tasks to the build task in gulp/tasks/build.js
 
     var gulp = require('gulp');
+    var runSequence = require('run-sequence');
     
-    
-    gulp.task('build', [
-        'jade',
-        'scss'
-    ] );
+    gulp.task('build', function() {
+        runSequence('jade','scss');
+    });
     
