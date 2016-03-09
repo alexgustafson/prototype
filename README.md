@@ -3,12 +3,12 @@ A prototype GULP project.
 
 features:
 
-gulp
-jade
-sass
-bower + wiredep
-browsersync
-documentation creator
+* gulp
+* jade
+* sass
+* bower + wiredep
+* browsersync
+* documentation creator
 
 addition:
 
