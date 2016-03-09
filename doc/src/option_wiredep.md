@@ -144,6 +144,23 @@ gulp/tasks/watch.js:
 
 test it out by adding a bower package and running the gulp build command:
 
-    $ bower install foundation
+    $ bower install foundation --save
     $ gulp build
     
+the --save option tells bower to write the installed package to the bower.json
+file. Bower will also download any dependencies that the installed package might
+rely on. The gulp build task will trigger the wiredep task which looks in the bower.json 
+file for packages and links the appropriate file.
+
+Check your index.jade file and the main.scss file, you should see the 
+new referenced files within the bower placeholders.
+
+Test the watch tasks. In one console run the watcher:
+
+    $ gulp watch
+    
+In another console run the bower commands:
+
+    $ bower uninstall foundation --save
+    
+The bower placeholders should now be empty again. 

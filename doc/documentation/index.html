@@ -486,9 +486,20 @@ gulp.task(<span class="hljs-string">&apos;watch&apos;</span>, <span class="hljs-
     }
 );
 </code></pre><p>test it out by adding a bower package and running the gulp build command:</p>
-<pre><code><span class="hljs-variable">$ </span>bower install foundation
-<span class="hljs-variable">$ </span>gulp build
-</code></pre></article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
+<pre><code>$ bower <span class="hljs-operator"><span class="hljs-keyword">install</span> foundation <span class="hljs-comment">--save</span>
+$ gulp <span class="hljs-keyword">build</span></span>
+</code></pre><p>the --save option tells bower to write the installed package to the bower.json
+file. Bower will also download any dependencies that the installed package might
+rely on. The gulp build task will trigger the wiredep task which looks in the bower.json 
+file for packages and links the appropriate file.</p>
+<p>Check your index.jade file and the main.scss file, you should see the 
+new referenced files within the bower placeholders.</p>
+<p>Test the watch tasks. In one console run the watcher:</p>
+<pre><code><span class="hljs-variable">$ </span>gulp watch
+</code></pre><p>In another console run the bower commands:</p>
+<pre><code>$ bower <span class="hljs-operator"><span class="hljs-keyword">uninstall</span> foundation <span class="hljs-comment">--save</span></span>
+</code></pre><p>The bower placeholders should now be empty again. </p>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
 <p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
 We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 
 We&apos;ll use gulp-markdown-docs to compile our markdown to html.</p>
