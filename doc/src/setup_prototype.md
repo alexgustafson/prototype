@@ -1,5 +1,5 @@
 ---
-label: Setup Prototype Project
+label: Setup Project
 id: setup_prototype
 categorySlug:
 categoryLabel: 
@@ -7,8 +7,10 @@ categoryRank:
 documentRank: 10
 highlightTheme: 'solarized_dark'
 
-Prototype Project Setup
-=======================
+Project Setup, Step by Step
+===========================
+
+Initialize the project directory.
 
     $ mkdir prototype
     $ cd prototype

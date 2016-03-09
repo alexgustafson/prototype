@@ -184,10 +184,11 @@ pre {
   border-top: 1px solid #323232;
 }</style></head>
   <body>
-    <section class="doc-nav"><ul class="doc-nav-group"><li class="doc-nav-item"><a href="#project_requirements">Requirements</a></li><li class="doc-nav-item"><a href="#setup_prototype">Setup Prototype Project</a></li><li class="doc-nav-item"><a href="#option_wiredep">Option Wiredep</a></li><li class="doc-nav-item"><a href="#doc_howto">Setup Documentation Project</a></li></ul></section>
+    <section class="doc-nav"><ul class="doc-nav-group"><li class="doc-nav-item"><a href="#project_requirements">Requirements</a></li><li class="doc-nav-item"><a href="#setup_prototype">Setup Project</a></li><li class="doc-nav-item"><a href="#option_wiredep">Option Wiredep</a></li><li class="doc-nav-item"><a href="#option_browsersync">Option Browsersync</a></li><li class="doc-nav-item"><a href="#doc_howto">Setup Documentation Project</a></li></ul></section>
     <section class="doc-content"><section class="doc-section"><article class="doc-article"><a class="doc-nav-anchor" name="project_requirements"></a><h1 id="project-requirements">Project Requirements</h1>
 <p>git, node, npm </p>
-</article><article class="doc-article"><a class="doc-nav-anchor" name="setup_prototype"></a><h1 id="prototype-project-setup">Prototype Project Setup</h1>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="setup_prototype"></a><h1 id="project-setup-step-by-step">Project Setup, Step by Step</h1>
+<p>Initialize the project directory.</p>
 <pre><code><span class="hljs-variable">$ </span>mkdir prototype
 <span class="hljs-variable">$ </span>cd prototype
 <span class="hljs-variable">$ </span>npm init
@@ -499,7 +500,34 @@ new referenced files within the bower placeholders.</p>
 </code></pre><p>In another console run the bower commands:</p>
 <pre><code>$ bower <span class="hljs-operator"><span class="hljs-keyword">uninstall</span> foundation <span class="hljs-comment">--save</span></span>
 </code></pre><p>The bower placeholders should now be empty again. </p>
-</article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="option_browsersync"></a><h1 id="option-browsersync">Option Browsersync</h1>
+<p>Browsersync is a node module that starts and mini local server so that you
+can test your project. Browsersync can also be configured with watchers
+so that changes to your code will trigger an automatic update of the page
+in the browser. </p>
+<h2 id="install-dependencies">Install Dependencies</h2>
+<p>From the root directory issue the following commands:</p>
+<pre><code>$ npm <span class="hljs-operator"><span class="hljs-keyword">install</span> browser-<span class="hljs-keyword">sync</span> <span class="hljs-comment">--save-dev</span></span>
+</code></pre><h2 id="add-gulp-serve-task">Add Gulp Serve Task</h2>
+<p>create the serve.js task file:</p>
+<pre><code><span class="hljs-variable">$ </span>touch gulp/tasks/serve.js
+</code></pre><p>add the following code to the gulp/tasks/serve.js file:</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> browserSync = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;browser-sync&apos;</span>).create();
+
+gulp.task(<span class="hljs-string">&apos;serve&apos;</span>, [<span class="hljs-string">&apos;build&apos;</span>, <span class="hljs-string">&apos;watch&apos;</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+
+    <span class="hljs-comment">// Serve files from the root of this project</span>
+    browserSync.init({
+        server: {
+            baseDir: <span class="hljs-string">&quot;./dist/&quot;</span>
+        },
+        injectChanges: <span class="hljs-literal">true</span>
+    });
+
+    gulp.watch(<span class="hljs-string">&quot;dist/**/*&quot;</span>, [<span class="hljs-string">&apos;&apos;</span>]).on(<span class="hljs-string">&apos;change&apos;</span>, browserSync.reload);
+})
+</code></pre></article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
 <p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
 We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 
 We&apos;ll use gulp-markdown-docs to compile our markdown to html.</p>
