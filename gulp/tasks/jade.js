@@ -13,5 +13,8 @@ gulp.task('jade', function () {
             pretty: true
         }))
         .on('error', handleError)
-        .pipe(gulp.dest(paths.dest))
+        // static option
+        //.pipe(gulp.dest(paths.dest))
+        // django option
+        .pipe(gulp.dest(paths.jade_dest))
 });

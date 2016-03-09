@@ -12,10 +12,10 @@ module.exports = {
     jade_exclude: '!' + appRoot + 'jade/**/_*.jade', // dont compile jade files that begin with _
 
     assets: appRoot + 'assets/**/*',
-    assets_dest: outputRoot + 'assets/',
+    //assets_dest: outputRoot + 'assets/',
 
     scripts: appRoot + 'scripts/**/*.js',
-    scripts_output: outputRoot + 'scripts/',
+    //scripts_output: outputRoot + 'scripts/',
 
     //wiredep stuff
     bowerDirectory: "bower_components",
@@ -24,7 +24,19 @@ module.exports = {
     wiredep_scss_output: appRoot + 'scss/',
     wiredep_sass_output: appRoot + 'sass/',
 
-    dest: outputRoot,
-    styleOutput: outputRoot + 'style/'
+    //dest: outputRoot,
+    //styleOutput: outputRoot + 'style/',
+
+    /*
+     django stuff:
+     prototype is the name of this project, adapt this to
+     whatever name your django module is called, for example:
+     '../static/Qblog/'
+     */
+    jade_dest: appRoot + '../templates/prototype/',
+    dest: appRoot + '../static/prototype/',
+    assets_dest: appRoot + '../static/prototype/assets/',
+    scripts_output: appRoot + '../static/prototype/scripts/',
+    styleOutput: appRoot + '../static/prototype/style/',
 
 };

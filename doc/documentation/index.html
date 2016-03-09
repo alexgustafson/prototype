@@ -184,7 +184,7 @@ pre {
   border-top: 1px solid #323232;
 }</style></head>
   <body>
-    <section class="doc-nav"><ul class="doc-nav-group"><li class="doc-nav-item"><a href="#project_requirements">Requirements</a></li><li class="doc-nav-item"><a href="#setup_prototype">Setup Project</a></li><li class="doc-nav-item"><a href="#option_wiredep">Option Wiredep</a></li><li class="doc-nav-item"><a href="#option_browsersync">Option Browsersync</a></li><li class="doc-nav-item"><a href="#doc_howto">Setup Documentation Project</a></li></ul></section>
+    <section class="doc-nav"><ul class="doc-nav-group"><li class="doc-nav-item"><a href="#project_requirements">Requirements</a></li><li class="doc-nav-item"><a href="#setup_prototype">Setup Project</a></li><li class="doc-nav-item"><a href="#option_wiredep">Option Wiredep</a></li><li class="doc-nav-item"><a href="#option_browsersync">Option Browsersync</a></li><li class="doc-nav-item"><a href="#option_django">Option Django</a></li><li class="doc-nav-item"><a href="#doc_howto">Setup Documentation Project</a></li></ul></section>
     <section class="doc-content"><section class="doc-section"><article class="doc-article"><a class="doc-nav-anchor" name="project_requirements"></a><h1 id="project-requirements">Project Requirements</h1>
 <p>git, node, npm </p>
 </article><article class="doc-article"><a class="doc-nav-anchor" name="setup_prototype"></a><h1 id="project-setup-step-by-step">Project Setup, Step by Step</h1>
@@ -501,7 +501,7 @@ new referenced files within the bower placeholders.</p>
 <pre><code>$ bower <span class="hljs-operator"><span class="hljs-keyword">uninstall</span> foundation <span class="hljs-comment">--save</span></span>
 </code></pre><p>The bower placeholders should now be empty again. </p>
 </article><article class="doc-article"><a class="doc-nav-anchor" name="option_browsersync"></a><h1 id="option-browsersync">Option Browsersync</h1>
-<p>Browsersync is a node module that starts and mini local server so that you
+<p>Browsersync is a node module that starts a mini local server so that you
 can test your project. Browsersync can also be configured with watchers
 so that changes to your code will trigger an automatic update of the page
 in the browser. </p>
@@ -527,7 +527,65 @@ gulp.task(<span class="hljs-string">&apos;serve&apos;</span>, [<span class="hljs
 
     gulp.watch(<span class="hljs-string">&quot;dist/**/*&quot;</span>, [<span class="hljs-string">&apos;&apos;</span>]).on(<span class="hljs-string">&apos;change&apos;</span>, browserSync.reload);
 })
-</code></pre></article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
+</code></pre><p>to test this run the serve task. A browser should open and any changes you 
+make in any src files should trigger a browser refresh.</p>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="option_django"></a><h1 id="option-django">Option Django</h1>
+<p>Django expects html templates to be in a template directory and all other
+frontend files ( js, css, images, fonts, etc ) to be located in a static
+directory. </p>
+<p>Until now we have compiled all filed intos a build/ directory which has not
+been included in version control. The idea is that the contents of the build
+directory are loaded to some remote host, but are not necessary in version
+control because they are built from src files.</p>
+<p>In a django project this will typically be different. A Django project&apos;s
+template and asset files are expected to be under version control, and
+typically deployed directly from a central project repository.</p>
+<p>A Django project will have no need for a build/ directory so we will have
+to adapt some of the paths.</p>
+<h2 id="setup-paths">Setup paths</h2>
+<p>In the gulp/paths.js file make the following changes:</p>
+<pre><code><span class="xml">module.exports = </span><span class="hljs-expression">{
+
+    <span class="hljs-variable">...</span>
+    <span class="hljs-variable">..</span>
+    <span class="hljs-variable">.</span>
+
+    /*
+     <span class="hljs-variable">django</span> <span class="hljs-variable">stuff</span>:
+     <span class="hljs-variable">prototype</span> <span class="hljs-variable">is</span> <span class="hljs-variable">the</span> <span class="hljs-variable">name</span> <span class="hljs-variable">of</span> <span class="hljs-variable">this</span> <span class="hljs-variable">project</span>, <span class="hljs-variable">adapt</span> <span class="hljs-variable">this</span> <span class="hljs-variable">to</span>
+     <span class="hljs-variable">whatever</span> <span class="hljs-variable">name</span> <span class="hljs-variable">your</span> <span class="hljs-variable">django</span> <span class="hljs-variable">module</span> <span class="hljs-variable">is</span> <span class="hljs-variable">called</span>, <span class="hljs-variable">for</span> <span class="hljs-variable">example</span>:
+     &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/Qblog</span>/&apos;
+     */
+    <span class="hljs-variable">jade</span>_<span class="hljs-variable">dest</span>: <span class="hljs-variable">appRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/templates</span>/&apos;,
+    <span class="hljs-variable">dest</span>: <span class="hljs-variable">appRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/prototype</span>/&apos;,
+    <span class="hljs-variable">assets</span>_<span class="hljs-variable">dest</span>: <span class="hljs-variable">appRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/prototype</span><span class="hljs-end-block">/assets</span>/&apos;,
+    <span class="hljs-variable">scripts</span>_<span class="hljs-variable">output</span>: <span class="hljs-variable">outputRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/prototype</span><span class="hljs-end-block">/scripts</span>/&apos;,
+    <span class="hljs-variable">styleOutput</span>: <span class="hljs-variable">outputRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/prototype</span><span class="hljs-end-block">/style</span>/&apos;,
+
+}</span><span class="xml">;</span>
+</code></pre><p>In the gulp/tasks/jade.js change the code so it looks like this:</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> paths = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;../paths&apos;</span>);
+<span class="hljs-keyword">var</span> jade = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;gulp-jade&quot;</span>);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handleError</span>(<span class="hljs-params">err</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(err.toString());
+    <span class="hljs-keyword">this</span>.emit(<span class="hljs-string">&apos;end&apos;</span>);
+}
+
+gulp.task(<span class="hljs-string">&apos;jade&apos;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> gulp.src([paths.jade, paths.jade_exclude])
+        .pipe(jade({
+            pretty: <span class="hljs-literal">true</span>
+        }))
+        .on(<span class="hljs-string">&apos;error&apos;</span>, handleError)
+        <span class="hljs-comment">// static option</span>
+        <span class="hljs-comment">//.pipe(gulp.dest(paths.dest))</span>
+        <span class="hljs-comment">// django option</span>
+        .pipe(gulp.dest(paths.jade_dest))
+});
+</code></pre><p>Delete the dist folder and run the build directory again. When the build completes</p>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
 <p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
 We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 
 We&apos;ll use gulp-markdown-docs to compile our markdown to html.</p>
