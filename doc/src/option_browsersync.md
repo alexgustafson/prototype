@@ -45,3 +45,6 @@ add the following code to the gulp/tasks/serve.js file:
     
         gulp.watch("dist/**/*", ['']).on('change', browserSync.reload);
     })
+    
+to test this run the serve task. A browser should open and any changes you 
+make in any src files should trigger a browser refresh.
