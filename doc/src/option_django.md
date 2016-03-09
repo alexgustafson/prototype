@@ -77,3 +77,34 @@ In the gulp/tasks/jade.js change the code so it looks like this:
 Delete the dist folder and run the build directory again. When the build completes
 you should see new static/prototype and templates/prototype directories.
 
+Now setup the browsersync settings to work with django.
+
+    var gulp = require('gulp');
+    var browserSync = require('browser-sync').create();
+    
+    gulp.task('serve', ['build', 'watch'], function() {
+    
+          browserSync({
+            online: false,            // online connectivity required?
+            host: '127.0.0.1',
+            port: 9000,               // different than django port
+            proxy: "127.0.0.1:8000",  // default django server url + port
+            startPath: "/prototype/", // open specific page
+            open: '127.0.0.1'         // start the browser
+          }, done);
+    
+        gulp.watch("templates/**/*", ['']).on('change', browserSync.reload);
+        gulp.watch("static/**/*", ['']).on('change', browserSync.reload);
+    })
+
+Django modules need to have an __init__.py file, so create this:
+
+    $ touch __init__.py
+    
+Depending on the type of django module you might need the one or more
+of the following:
+
+    $ touch urls.py
+    $ touch models.py
+    $ touch views.py
+    $ touch admin.py

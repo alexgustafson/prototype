@@ -556,7 +556,7 @@ to adapt some of the paths.</p>
      <span class="hljs-variable">whatever</span> <span class="hljs-variable">name</span> <span class="hljs-variable">your</span> <span class="hljs-variable">django</span> <span class="hljs-variable">module</span> <span class="hljs-variable">is</span> <span class="hljs-variable">called</span>, <span class="hljs-variable">for</span> <span class="hljs-variable">example</span>:
      &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/Qblog</span>/&apos;
      */
-    <span class="hljs-variable">jade</span>_<span class="hljs-variable">dest</span>: <span class="hljs-variable">appRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/templates</span>/&apos;,
+    <span class="hljs-variable">jade</span>_<span class="hljs-variable">dest</span>: <span class="hljs-variable">appRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/templates</span><span class="hljs-end-block">/prototype</span>/&apos;,        
     <span class="hljs-variable">dest</span>: <span class="hljs-variable">appRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/prototype</span>/&apos;,
     <span class="hljs-variable">assets</span>_<span class="hljs-variable">dest</span>: <span class="hljs-variable">appRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/prototype</span><span class="hljs-end-block">/assets</span>/&apos;,
     <span class="hljs-variable">scripts</span>_<span class="hljs-variable">output</span>: <span class="hljs-variable">outputRoot</span> + &apos;<span class="hljs-variable">..</span><span class="hljs-end-block">/static</span><span class="hljs-end-block">/prototype</span><span class="hljs-end-block">/scripts</span>/&apos;,
@@ -584,8 +584,35 @@ gulp.task(<span class="hljs-string">&apos;jade&apos;</span>, <span class="hljs-f
         <span class="hljs-comment">// django option</span>
         .pipe(gulp.dest(paths.jade_dest))
 });
-</code></pre><p>Delete the dist folder and run the build directory again. When the build completes</p>
-</article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
+</code></pre><p>Delete the dist folder and run the build directory again. When the build completes
+you should see new static/prototype and templates/prototype directories.</p>
+<p>Now setup the browsersync settings to work with django.</p>
+<pre><code><span class="hljs-keyword">var</span> gulp = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;gulp&apos;</span>);
+<span class="hljs-keyword">var</span> browserSync = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;browser-sync&apos;</span>).create();
+
+gulp.task(<span class="hljs-string">&apos;serve&apos;</span>, [<span class="hljs-string">&apos;build&apos;</span>, <span class="hljs-string">&apos;watch&apos;</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+
+      browserSync({
+        online: <span class="hljs-literal">false</span>,            <span class="hljs-comment">// online connectivity required?</span>
+        host: <span class="hljs-string">&apos;127.0.0.1&apos;</span>,
+        port: <span class="hljs-number">9000</span>,               <span class="hljs-comment">// different than django port</span>
+        proxy: <span class="hljs-string">&quot;127.0.0.1:8000&quot;</span>,  <span class="hljs-comment">// default django server url + port</span>
+        startPath: <span class="hljs-string">&quot;/prototype/&quot;</span>, <span class="hljs-comment">// open specific page</span>
+        open: <span class="hljs-string">&apos;127.0.0.1&apos;</span>         <span class="hljs-comment">// start the browser</span>
+      }, done);
+
+    gulp.watch(<span class="hljs-string">&quot;templates/**/*&quot;</span>, [<span class="hljs-string">&apos;&apos;</span>]).on(<span class="hljs-string">&apos;change&apos;</span>, browserSync.reload);
+    gulp.watch(<span class="hljs-string">&quot;static/**/*&quot;</span>, [<span class="hljs-string">&apos;&apos;</span>]).on(<span class="hljs-string">&apos;change&apos;</span>, browserSync.reload);
+})
+</code></pre><p>Django modules need to have an <strong>init</strong>.py file, so create this:</p>
+<pre><code><span class="hljs-variable">$ </span>touch __init__.py
+</code></pre><p>Depending on the type of django module you might need the one or more
+of the following:</p>
+<pre><code>$ touch urls<span class="hljs-class">.py</span>
+$ touch models<span class="hljs-class">.py</span>
+$ touch views<span class="hljs-class">.py</span>
+$ touch admin.py
+</code></pre></article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
 <p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
 We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 
 We&apos;ll use gulp-markdown-docs to compile our markdown to html.</p>
