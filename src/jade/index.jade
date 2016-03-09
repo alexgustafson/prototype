@@ -6,9 +6,11 @@ html(lang="en")
       if (foo) {
         bar(1 + 5)
       }
-
+    // build:css style/main.css
+    link(rel="stylesheet" href="style/main.css")
     // bower:css
     // endbower
+    // endbuild
 
   body
     h1 Jade - node template engine
@@ -18,7 +20,14 @@ html(lang="en")
         templating language with a
         strong focus on performance
         and powerful features..
-
+    // build:js scripts/main.js
     // bower:js
+    script(src='../bower_components/jquery/dist/jquery.js')
+    script(src='../bower_components/modernizr/modernizr.js')
+    script(src='../bower_components/fastclick/lib/fastclick.js')
+    script(src='../bower_components/jquery.cookie/jquery.cookie.js')
+    script(src='../bower_components/jquery-placeholder/jquery.placeholder.js')
+    script(src='../bower_components/foundation/js/foundation.js')
     // endbower
+    // endbuild
 
