@@ -501,7 +501,7 @@ new referenced files within the bower placeholders.</p>
 <pre><code>$ bower <span class="hljs-operator"><span class="hljs-keyword">uninstall</span> foundation <span class="hljs-comment">--save</span></span>
 </code></pre><p>The bower placeholders should now be empty again. </p>
 </article><article class="doc-article"><a class="doc-nav-anchor" name="option_browsersync"></a><h1 id="option-browsersync">Option Browsersync</h1>
-<p>Browsersync is a node module that starts and mini local server so that you
+<p>Browsersync is a node module that starts a mini local server so that you
 can test your project. Browsersync can also be configured with watchers
 so that changes to your code will trigger an automatic update of the page
 in the browser. </p>
@@ -527,7 +527,9 @@ gulp.task(<span class="hljs-string">&apos;serve&apos;</span>, [<span class="hljs
 
     gulp.watch(<span class="hljs-string">&quot;dist/**/*&quot;</span>, [<span class="hljs-string">&apos;&apos;</span>]).on(<span class="hljs-string">&apos;change&apos;</span>, browserSync.reload);
 })
-</code></pre></article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
+</code></pre><p>to test this run the serve task. A browser should open and any changes you 
+make in any src files should trigger a browser refresh.</p>
+</article><article class="doc-article"><a class="doc-nav-anchor" name="doc_howto"></a><h1 id="how-to-create-the-documentation-project">How to Create the Documentation Project</h1>
 <p>We will create a simple gulp project that will allow us to write nice Markdown based documentation. 
 We will use Gulp and Browsersync to let us view edits in the browser as we are making then. 
 We&apos;ll use gulp-markdown-docs to compile our markdown to html.</p>
