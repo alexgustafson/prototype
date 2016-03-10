@@ -18,7 +18,7 @@ module.exports = {
     //scripts_output: outputRoot + 'scripts/',
 
     //wiredep stuff
-    bowerDirectory: "bower_components",
+    bowerDirectory: "static/prototype/vendor/",
     bowerJson: 'bower.json',
     wiredep_jade_output: appRoot + 'jade/',
     wiredep_scss_output: appRoot + 'scss/',
@@ -33,10 +33,12 @@ module.exports = {
      whatever name your django module is called, for example:
      '../static/Qblog/'
      */
-    jade_dest: appRoot + '../templates/prototype/',
-    dest: appRoot + '../static/prototype/',
-    assets_dest: appRoot + '../static/prototype/assets/',
-    scripts_output: appRoot + '../static/prototype/scripts/',
-    styleOutput: appRoot + '../static/prototype/style/',
+
+    jade_dest: 'templates/prototype/',
+    dest: 'static/prototype/',
+    assets_dest: 'static/prototype/assets/',
+    scripts_output: 'static/prototype/scripts/',
+    styleOutput: 'static/prototype/style/',
+
 
 };
