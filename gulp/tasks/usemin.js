@@ -8,10 +8,11 @@ var paths = require('../paths')
 
 
 gulp.task('usemin', function() {
-    gulp.src('dist/*.html')
+    gulp.src(paths.dest + '**/*.html')
         .pipe(usemin({
             css: [minifyCss(), 'concat', rev()],
+            //html: [minifyHtml({empty: true})],
             js: [uglify(), rev()]
         }))
-        .pipe(gulp.dest('dist/'));
+        .pipe(gulp.dest(paths.dest));
 });
